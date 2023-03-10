@@ -1,0 +1,52 @@
+# pipeline name
+pipeline:
+    name: mlops-template
+    
+# Data pre-processing and feature engineering
+processing:
+    image_uri: 961105418118.dkr.ecr.eu-central-1.amazonaws.com/mlops-processing:latest
+    entry_point: src/model_build/pipeline_src/feature_engineering.py
+    catalog: AwsDataCatalog
+    database: mlops-template
+    parameters:
+        input_name: /opt/ml/processing/input/mlops_data.parquet
+        target: journey_type
+        x_train: /opt/ml/processing/x_train
+        y_train: /opt/ml/processing/y_train
+        x_test: /opt/ml/processing/x_test
+        y_test: /opt/ml/processing/y_test
+        model: /opt/ml/processing/model
+    instance_count: 1
+    sklearn_framework_version: 0.23-1
+    instance_type: ml.m5.xlarge
+    base_job_name: mll-mlops-model-feature-engineering
+
+
+# Train the xgboost model
+training:
+    image_uri: 961105418118.dkr.ecr.eu-central-1.amazonaws.com/mlops-training:latest
+    entry_point: model_build/pipeline_src/model_training.py
+    source_dir: src
+    hyperparameters:
+        n_estimators: 125
+        min_samples_leaf: 4
+        target: journey_type
+        mlflow_secrets: mlflow-server-credentials
+        mlflow_api_name: mll-mlflow
+        experiment_name: mll-mlops-template
+        save_model_in_registry: True
+        model_name: mll-mlops-xgboost
+    instance_count: 1
+    sklearn_framework_version: 1.0-1
+    instance_type: ml.m5.xlarge
+    base_job_name: mll-mlops-model-training
+    
+# register the inference pipeline
+model_registry:
+    source_dir: src/model_deploy
+    preprocessing_inference: preprocessing_inference.py
+    model_inference: inference.py
+    postprocessing_inference: postprocessing_inference.py
+    instance_type: ml.m5.xlarge
+    pipeline_name: mll-mlops-model-inference-pipeline
+    model_package_group_name: mll-mlops-model-template

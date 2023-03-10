@@ -1,0 +1,7 @@
+endpoint:
+    name: mlops-template
+    mlops_model: 
+      name: mll-mlops-model-template
+      instance_type: ml.m5.xlarge
+      instance_count: 1
+      initial_variant_weight: 100
