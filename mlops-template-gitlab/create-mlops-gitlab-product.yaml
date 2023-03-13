@@ -22,17 +22,17 @@ Parameters:
 
   ProductOwnerParameter:
     Type: String
-    Default: Product Owner
+    Default: Machine Learning Lab
     Description: The owner of this product within the portfolio.
 
   ProductDistributorParameter:
     Type: String
-    Default: Product Distributor
+    Default: Machine Learning Lab
     Description: The distributor of this product within the portfolio.
 
   ProductSupportDescriptionParameter:
     Type: String
-    Default: Support Description
+    Default: The MLOps template in this repo can be used to setup a SageMaker Project for model training and deployment using GitLab for SVC and GitLab Pipelines for CI/CD.
     Description: The support description of this product within the portfolio.
 
   ProductSupportEmailParameter:
