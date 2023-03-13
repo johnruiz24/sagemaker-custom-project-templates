@@ -133,7 +133,7 @@ Resources:
     Type: AWS::Events::Rule
     Properties:
       # Max length allowed: 64
-      Name: !Sub sagemaker-${SageMakerProjectId}-rule # max: 10+33+15+5=63 chars
+      Name: !Sub sagemaker-${SageMakerProjectName}-rule #-${SageMakerProjectId} # max: 10+33+15+5=63 chars
       Description: "Rule to trigger a deployment when SageMaker Model registry is updated with a new model package. For example, a new model package is registered with Registry"
       EventPattern:
         source:
@@ -142,7 +142,7 @@ Resources:
           - "SageMaker Model Package State Change"
         detail:
           ModelPackageGroupName:
-            - !Sub ${SageMakerProjectName}#-${SageMakerProjectId}
+            - !Sub ${SageMakerProjectName} #-${SageMakerProjectId}
           ModelApprovalStatus:
             - Approved
       State: "ENABLED"
@@ -163,10 +163,10 @@ Resources:
     Type: 'AWS::SageMaker::CodeRepository'
     DependsOn: SageMakerSeedCodeCheckinLambdaInvoker
     Properties:
-      CodeRepositoryName: !Sub ${ModelDeployCodeRepositoryName}#-${SageMakerProjectId}
+      CodeRepositoryName: !Sub ${ModelDeployCodeRepositoryName} #-${SageMakerProjectId}
       GitConfig:
         Branch: development
-        RepositoryUrl: !Sub ${RepositoryBaseUrl}/${ModelDeployCodeRepositoryName}#-${SageMakerProjectId}
+        RepositoryUrl: !Sub ${RepositoryBaseUrl}/${ModelDeployCodeRepositoryName} #-${SageMakerProjectId}
       Tags:
         - Key: "sagemaker:project-id"
           Value: !Sub ${SageMakerProjectId}
@@ -180,7 +180,7 @@ Resources:
       CodeRepositoryName: !Sub ${ModelBuildCodeRepositoryName}
       GitConfig:
         Branch: development
-        RepositoryUrl: !Sub ${RepositoryBaseUrl}/${ModelBuildCodeRepositoryName}#-${SageMakerProjectId}
+        RepositoryUrl: !Sub ${RepositoryBaseUrl}/${ModelBuildCodeRepositoryName} #-${SageMakerProjectId}
       Tags:
         - Key: "sagemaker:project-id"
           Value: !Sub ${SageMakerProjectId}
