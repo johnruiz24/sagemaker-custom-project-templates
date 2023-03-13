@@ -295,6 +295,33 @@ Resources:
         -
           Key: sagemaker:studio-visibility
           Value: 'true'
+        -
+          Key: application
+          Value: 'mll-mlops-sagemaker-gitlab-template'
+        -
+          Key: service
+          Value: 'mll-mlops-sagemaker-gitlab-template'
+        -
+          Key: account
+          Value: 'mll-dev'
+        -
+          Key: businessunit
+          Value: 'machinelearninglab'
+        -
+          Key: subunit
+          Value: 'machinelearninglab'
+        -
+          Key: classification
+          Value: 'internal'
+        -
+          Key: contact
+          Value: 'a44e37f5.TUIGroup.onmicrosoft.com@emea.teams.ms'
+        -
+          Key: version
+          Value: '1.0.0'
+        -
+          Key: env
+          Value: 'development'
 
 
   ServiceCatalogProductAssociation:
