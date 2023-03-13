@@ -1,0 +1,9 @@
+aws-cdk-lib==2.42.0
+awscli
+boto3
+constructs==10.1.96
+mlflow==1.27.0
+pyyaml
+sagemaker==2.105.0
+scikit-learn==1.1.2
+pandas

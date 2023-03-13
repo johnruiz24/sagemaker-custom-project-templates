@@ -2,17 +2,17 @@
 AWSTemplateFormatVersion: "2010-09-09"
 
 Description: >-
-  Template for creating a Service Catalog product based on the GitLab SageMaker Custom Project Example
+  Template for creating a Service Catalog product based on the GitLab SageMaker Custom Project
 
 Parameters:
 
   PortfolioIDParameter:
     Type: String
-    Description: The ID of the Service Catalog Portfolio you wish you create the product inside. If using the Portfolio Stack example, the value will be found in the Outputs' tab of the stack under "CreatedPortfolioID".
+    Description: The ID of the Service Catalog Portfolio you wish you create the product inside. If using the Portfolio Stack, the value will be found in the Outputs' tab of the stack under "CreatedPortfolioID".
 
   ProductNameParameter:
     Type: String
-    Default: MLOps with GitLab SageMaker Project Example
+    Default: MLOps with GitLab SageMaker Project
     Description: The name of this product within the portfolio.
 
   ProductDescriptionParameter:
@@ -37,7 +37,7 @@ Parameters:
 
   ProductSupportEmailParameter:
     Type: String
-    Default: support@example.com
+    Default: a44e37f5.TUIGroup.onmicrosoft.com@emea.teams.ms
     Description: The support email of this product within the portfolio.
 
   ProductSupportURLParameter:
@@ -48,12 +48,12 @@ Parameters:
   SageMakerProjectRepoZipParameter:
     Type: String
     Default: 'https://github.com/aws-samples/sagemaker-custom-project-templates/archive/refs/heads/main.zip'
-    Description: 'URL for a Zip of the SageMaker Projects Examples GitHub Repo'
+    Description: 'URL for a Zip of the SageMaker Projects GitHub Repo'
 
   SageMakerProjectRepoNameBranchParameter:
     Type: String
     Default: 'sagemaker-custom-project-templates-main'
-    Description: 'Name/Branch of the SageMaker Projects Examples GitHub Repo'
+    Description: 'Name/Branch of the SageMaker Projects GitHub Repo'
   
   SageMakerProjectsProjectNameParameter:
     Type: String
@@ -223,7 +223,7 @@ Resources:
   BootstrapS3Bucket:
     Type: AWS::S3::Bucket
     Properties: 
-      BucketName: !Join ['-',['sm-project-mlopsgitlab-example', !Select [4, !Split ['-', !Select [2, !Split ['/', !Ref 'AWS::StackId']]]]]]
+      BucketName: !Join ['-',['sm-project-mlopsgitlab', !Select [4, !Split ['-', !Select [2, !Split ['/', !Ref 'AWS::StackId']]]]]]
       PublicAccessBlockConfiguration:
         BlockPublicAcls: true
         BlockPublicPolicy: true
@@ -252,7 +252,7 @@ Resources:
     Type: AWS::IAM::Role
     Properties: 
       RoleName: !Join ['-', ['SMCustomProject-MLOpsGitLab-Bootstrap-Role', !Select [4, !Split ['-', !Select [2, !Split ['/', !Ref 'AWS::StackId']]]]]]
-      Description: Role used for launching the lambda function to bootstrap creation of the MLOps GitLab SageMaker Custom Project Template example
+      Description: Role used for launching the lambda function to bootstrap creation of the MLOps GitLab SageMaker Custom Project Template
       AssumeRolePolicyDocument:
         Version: '2012-10-17'
         Statement:
@@ -314,11 +314,11 @@ Resources:
               Service:
                 - servicecatalog.amazonaws.com
             Action: 'sts:AssumeRole'
-      Description: Role to use for launching the GitLab SageMaker Project example.
+      Description: Role to use for launching the GitLab SageMaker Project.
       ManagedPolicyArns: 
         - arn:aws:iam::aws:policy/AmazonSageMakerAdmin-ServiceCatalogProductsServiceRolePolicy
       Policies: 
-        - PolicyName: SM-Gitlab-Example-Launch-Policy
+        - PolicyName: SM-Gitlab-Launch-Policy
           PolicyDocument:
             Version: "2012-10-17"
             Statement:
@@ -331,12 +331,16 @@ Resources:
                 Action:
                   - 'iam:PassRole'
                 Resource:
-                  - !Join ['', ['arn:aws:iam::', !Ref AWS::AccountId, ':role/SM-Gitlab-Example-Use-Role-*']]
+                  - !Join ['', ['arn:aws:iam::', !Ref AWS::AccountId, ':role/SM-Gitlab-Use-Role-*']]
               - Effect: Allow
                 Action:
                   - 'sagemaker:AddTags'
                 Resource: '*'
-      RoleName: !Join ['-', ['SM-Gitlab-Example-Launch-Role', !Select [4, !Split ['-', !Select [2, !Split ['/', !Ref 'AWS::StackId']]]]]]
+              - Effect: Allow
+                Action:
+                  - 'lambda:TagResource'
+                Resource: '*'
+      RoleName: !Join ['-', ['SM-Gitlab-Launch-Role', !Select [4, !Split ['-', !Select [2, !Split ['/', !Ref 'AWS::StackId']]]]]]
 
   ServiceCatalogProductUseRole:
     Type: AWS::IAM::Role
@@ -358,9 +362,9 @@ Resources:
                 - lambda.amazonaws.com
                 - codebuild.amazonaws.com
             Action: 'sts:AssumeRole'
-      Description: Role to use for launching the GitLab SageMaker Project example.
+      Description: Role to use for launching the GitLab SageMaker Project.
       Policies: 
-        - PolicyName: SM-Gitlab-Example-Use-Policy
+        - PolicyName: SM-Gitlab-Use-Policy
           PolicyDocument:
             Version: "2012-10-17"
             Statement:
@@ -421,7 +425,7 @@ Resources:
               - Action:
                   - 'iam:PassRole'
                 Resource:
-                  - !Join ['', ['arn:aws:iam::', !Ref AWS::AccountId, ':role/SM-Gitlab-Example-Use-Role-*']]
+                  - !Join ['', ['arn:aws:iam::', !Ref AWS::AccountId, ':role/SM-Gitlab-Use-Role-*']]
                 Effect: Allow
               - Effect: Allow
                 Action:
@@ -480,7 +484,7 @@ Resources:
                 Resource:
                   - !Ref GitLabIAMUserSecretKeySecret
                   - !Ref GitLabIAMUserAccessKeySecret
-      RoleName: !Join ['-', ['SM-Gitlab-Example-Use-Role', !Select [4, !Split ['-', !Select [2, !Split ['/', !Ref 'AWS::StackId']]]]]]
+      RoleName: !Join ['-', ['SM-Gitlab-Use-Role', !Select [4, !Split ['-', !Select [2, !Split ['/', !Ref 'AWS::StackId']]]]]]
 
   ServiceCatalogProductRoleLaunchContstraint:
     Type: AWS::ServiceCatalog::LaunchRoleConstraint
@@ -647,7 +651,7 @@ Resources:
                 responseData = {}
                 responseData['message'] = 'exception caught'
                 cfnresponse.send(event, context, cfnresponse.FAILED, responseData)
-      Description: Cloudformation Custom Lambda to bootstrap the MLOps GitLab SageMaker Project example
+      Description: Cloudformation Custom Lambda to bootstrap the MLOps GitLab SageMaker Project
 
   InvokeCustomLambda:
     Type: Custom::InvokeCustomLambda

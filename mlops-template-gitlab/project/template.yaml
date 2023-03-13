@@ -32,7 +32,7 @@ Parameters:
   ModelDeployCodeRepositoryName:
     Type: String
     MaxLength: 1024
-    Description: Repository name of the Model Deplyment Code Repository
+    Description: Repository name of the Model Deployment Code Repository
   
   GitLabGroupID:
     Type: String
@@ -68,7 +68,7 @@ Resources:
   MlOpsArtifactsBucket:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: !Sub sagemaker-project-${SageMakerProjectId} # 58 chars max/ 64 allowed
+      BucketName: !Sub ${SageMakerProjectName}-development # 58 chars max/ 64 allowed
 
   GitSeedCodeCheckinLambda:
     Type: 'AWS::Lambda::Function'
@@ -76,7 +76,7 @@ Resources:
       Description: To trigger the codebuild project for the seedcode checkin
       Handler: lambda_function.lambda_handler
       Runtime: python3.9
-      FunctionName: !Sub sagemaker-${SageMakerProjectId}-git-seedcodecheckin # max: 10+15+19=44 out of 64 max
+      FunctionName: !Sub ${SageMakerProjectName}-git-seedcode-checkin # max: 10+15+19=44 out of 64 max
       Timeout: 900
       Role: AWSDEFAULT___USE_ROLE___
       Code:
@@ -112,7 +112,7 @@ Resources:
       Description: To trigger the GitLab Pipeline
       Handler: lambda_function.lambda_handler
       Runtime: python3.8
-      FunctionName: !Sub sagemaker-${SageMakerProjectId}-gitlab-trigger # max: 10+15+19=44 out of 64 max
+      FunctionName: !Sub ${SageMakerProjectName}-gitlab-trigger # max: 10+15+19=44 out of 64 max
       Timeout: 900
       Role: AWSDEFAULT___USE_ROLE___
       Code:
@@ -133,7 +133,7 @@ Resources:
     Type: AWS::Events::Rule
     Properties:
       # Max length allowed: 64
-      Name: !Sub sagemaker-${SageMakerProjectName}-${SageMakerProjectId}-event-rule # max: 10+33+15+5=63 chars
+      Name: !Sub ${SageMakerProjectName}-sagemaker-rule#-${SageMakerProjectId} # max: 10+33+15+5=63 chars
       Description: "Rule to trigger a deployment when SageMaker Model registry is updated with a new model package. For example, a new model package is registered with Registry"
       EventPattern:
         source:
@@ -142,7 +142,7 @@ Resources:
           - "SageMaker Model Package State Change"
         detail:
           ModelPackageGroupName:
-            - !Sub ${SageMakerProjectName}-${SageMakerProjectId}
+            - !Sub ${SageMakerProjectName}#-${SageMakerProjectId}
           ModelApprovalStatus:
             - Approved
       State: "ENABLED"
@@ -163,10 +163,10 @@ Resources:
     Type: 'AWS::SageMaker::CodeRepository'
     DependsOn: SageMakerSeedCodeCheckinLambdaInvoker
     Properties:
-      CodeRepositoryName: !Sub ${ModelDeployCodeRepositoryName}-${SageMakerProjectId}
+      CodeRepositoryName: !Sub ${ModelDeployCodeRepositoryName}#-${SageMakerProjectId}
       GitConfig:
-        Branch: main
-        RepositoryUrl: !Sub ${RepositoryBaseUrl}/${ModelDeployCodeRepositoryName}-${SageMakerProjectId}
+        Branch: development
+        RepositoryUrl: !Sub ${RepositoryBaseUrl}/${ModelDeployCodeRepositoryName}#-${SageMakerProjectId}
       Tags:
         - Key: "sagemaker:project-id"
           Value: !Sub ${SageMakerProjectId}
@@ -177,10 +177,10 @@ Resources:
     Type: 'AWS::SageMaker::CodeRepository'
     DependsOn: SageMakerSeedCodeCheckinLambdaInvoker
     Properties:
-      CodeRepositoryName: !Sub ${ModelBuildCodeRepositoryName}-${SageMakerProjectId}
+      CodeRepositoryName: !Sub ${ModelBuildCodeRepositoryName}#-${SageMakerProjectId}
       GitConfig:
-        Branch: main
-        RepositoryUrl: !Sub ${RepositoryBaseUrl}/${ModelBuildCodeRepositoryName}-${SageMakerProjectId}
+        Branch: development
+        RepositoryUrl: !Sub ${RepositoryBaseUrl}/${ModelBuildCodeRepositoryName}#-${SageMakerProjectId}
       Tags:
         - Key: "sagemaker:project-id"
           Value: !Sub ${SageMakerProjectId}
