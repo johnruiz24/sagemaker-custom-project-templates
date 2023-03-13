@@ -133,7 +133,7 @@ Resources:
     Type: AWS::Events::Rule
     Properties:
       # Max length allowed: 64
-      Name: !Sub sagemaker-${SageMakerProjectName}-sagemaker-rule#-${SageMakerProjectId} # max: 10+33+15+5=63 chars
+      Name: !Sub sagemaker-${SageMakerProjectId}-rule # max: 10+33+15+5=63 chars
       Description: "Rule to trigger a deployment when SageMaker Model registry is updated with a new model package. For example, a new model package is registered with Registry"
       EventPattern:
         source:
