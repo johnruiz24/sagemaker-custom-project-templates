@@ -11,8 +11,8 @@ variables:
   EXPORT_TEMPLATE_PROD_PARAMS: "prod-params-export.json"
   EXPORT_TEMPLATE_PROD_TAGS: "prod-tags-export.json"
   EXPORT_TEST_RESULTS: "test-results.json"
-  STACK_NAME_DEPLOY_STAGING: "sagemaker-${SAGEMAKER_PROJECT_NAME}-${SAGEMAKER_PROJECT_ID}-deploy-staging"
-  STACK_NAME_DEPLOY_PROD: "sagemaker-${SAGEMAKER_PROJECT_NAME}-${SAGEMAKER_PROJECT_ID}-deploy-prod"
+  STACK_NAME_DEPLOY_STAGING: "sagemaker-${SAGEMAKER_PROJECT_NAME}-deploy-staging"
+  STACK_NAME_DEPLOY_PROD: "sagemaker-${SAGEMAKER_PROJECT_NAME}-deploy-prod"
 
 cache:
   paths:
