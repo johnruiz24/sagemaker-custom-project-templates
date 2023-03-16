@@ -72,8 +72,8 @@ def lambda_handler(event, context):
     model_deploy_sm_seed_code_object_name = os.environ['ModelDeploySeedCode'] 
     region = os.environ['Region']
     
-    gitlab_project_name_build = os.environ['BuildProjectName'] + '-' + os.environ['SageMakerProjectId']
-    gitlab_project_name_deploy = os.environ['DeployProjectName'] + '-' + os.environ['SageMakerProjectId']
+    gitlab_project_name_build = os.environ['BuildProjectName'] #+ '-' + os.environ['SageMakerProjectId']
+    gitlab_project_name_deploy = os.environ['DeployProjectName'] #+ '-' + os.environ['SageMakerProjectId']
 
     #Fetch GitLab Token Secret
 

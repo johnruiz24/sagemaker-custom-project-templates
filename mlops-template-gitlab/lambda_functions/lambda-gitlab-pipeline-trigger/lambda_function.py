@@ -70,22 +70,24 @@ def lambda_handler(event, context):
 
     # Create the GitLab Project
     try:
-        project = gl.projects.list(search = gitlab_project_name + '-' + project_id)[0]
-        logging.info("Project")
-        logging.info(project)
-        
-    except Exception as e:
-        logger.error("Unable to find the project for model deploy in GitLab..")
-        logger.error(e)
-        return {
-            'message' : "Failed to find GitLab project.."
-        }
+        projects = gl.projects.list(search = gitlab_project_name)
 
-    try:
+        # Find the project with the exact name
+        for project in projects:
+            if project.name == gitlab_project_name:
+                logging.info(f"Found project '{gitlab_project_name}' with ID '{project.id}'")
+                break
+        else:
+            logger.error(f"No project found with name '{gitlab_project_name}'")
+            return {
+                'message': "Failed to find GitLab project."
+            }
+        
         trigger = project.triggers.create({'description' : gitlab_project_name + '-lambda-generated-token'})
         token = trigger.token
         project.trigger_pipeline('main', token)
         trigger.delete()
+    
     except Exception as e:
         logging.error("Failed to trigger pipeline..")
         logging.error(e)
