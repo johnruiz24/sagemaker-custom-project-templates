@@ -83,9 +83,13 @@ def lambda_handler(event, context):
                 'message': "Failed to find GitLab project."
             }
         
-        trigger = project.triggers.create({'description' : gitlab_project_name + '-lambda-generated-token'})
+        trigger = project.triggers.create({'description' : f'{gitlab_project_name}-lambda-generated-token'})
         token = trigger.token
-        project.trigger_pipeline('main', token)
+
+        project.branches.create({'branch': 'development', 'ref': 'main'})
+        project.branches.create({'branch': 'staging', 'ref': 'main'})
+
+        project.trigger_pipeline('development', token)
         trigger.delete()
     
     except Exception as e:
