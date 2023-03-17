@@ -3,6 +3,7 @@ image: python:latest
 variables:
   PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
   SAGEMAKER_PROJECT_NAME_ID: "$SAGEMAKER_PROJECT_NAME-$SAGEMAKER_PROJECT_ID"
+  SAGEMAKER_PROJECT_NAME_BRANCH: "${SAGEMAKER_PROJECT_NAME}-${CI_COMMIT_REF_SLUG}"
   EXPORT_TEMPLATE_NAME: "template-export.yml"
   EXPORT_TEMPLATE_STAGING_CONFIG: "staging-config-export.json"
   EXPORT_TEMPLATE_STAGING_PARAMS: "staging-params-export.json"
@@ -11,8 +12,8 @@ variables:
   EXPORT_TEMPLATE_PROD_PARAMS: "prod-params-export.json"
   EXPORT_TEMPLATE_PROD_TAGS: "prod-tags-export.json"
   EXPORT_TEST_RESULTS: "test-results.json"
-  STACK_NAME_DEPLOY_STAGING: "sagemaker-${SAGEMAKER_PROJECT_NAME}-deploy-staging"
-  STACK_NAME_DEPLOY_PROD: "sagemaker-${SAGEMAKER_PROJECT_NAME}-deploy-prod"
+  STACK_NAME_DEPLOY_STAGING: "sagemaker-${SAGEMAKER_PROJECT_NAME}-staging"
+  STACK_NAME_DEPLOY_PROD: "sagemaker-${SAGEMAKER_PROJECT_NAME}-prod"
 
 cache:
   paths:
@@ -35,7 +36,7 @@ stages:
 build_job:       
   stage: build
   script:
-    - python build.py --region "$AWS_REGION" --model-execution-role "$MODEL_EXECUTION_ROLE_ARN" --model-package-group-name "$SAGEMAKER_PROJECT_NAME" --sagemaker-project-id "$SAGEMAKER_PROJECT_ID" --sagemaker-project-name "$SAGEMAKER_PROJECT_NAME" --export-staging-config $EXPORT_TEMPLATE_STAGING_CONFIG --export-prod-config $EXPORT_TEMPLATE_PROD_CONFIG --sagemaker-project-arn "$SAGEMAKER_PROJECT_ARN"
+    - python build.py --region "$AWS_REGION" --model-execution-role "$MODEL_EXECUTION_ROLE_ARN" --model-package-group-name "$SAGEMAKER_PROJECT_NAME_BRANCH" --sagemaker-project-id "$SAGEMAKER_PROJECT_ID" --sagemaker-project-name "$SAGEMAKER_PROJECT_NAME_BRANCH" --export-staging-config $EXPORT_TEMPLATE_STAGING_CONFIG --export-prod-config $EXPORT_TEMPLATE_PROD_CONFIG --sagemaker-project-arn "$SAGEMAKER_PROJECT_ARN"
     - export PATH="$HOME/.local/bin:$PATH" && aws cloudformation package --template endpoint-config-template.yml --s3-bucket $ARTIFACT_BUCKET --output-template $EXPORT_TEMPLATE_NAME
     - cat $EXPORT_TEMPLATE_STAGING_CONFIG
     - cat $EXPORT_TEMPLATE_PROD_CONFIG
@@ -50,20 +51,20 @@ build_job:
       - $EXPORT_TEMPLATE_PROD_TAGS
 
 staging_deploy:  
-  stage: staging deploy 
+  stage: staging 
   dependencies: 
     - build_job
   script:
     - python deploy-stack.py --region $AWS_REGION --stack-name gitlab-stg --param-file $EXPORT_TEMPLATE_STAGING_CONFIG --project-id $SAGEMAKER_PROJECT_NAME_ID
 
 test_staging:
-  stage: test staging
+  stage: test
   script:
     - echo "Linting code... This will take about 10 seconds."
     - echo "No lint issues found."
 
 production_deploy:      
-  stage: production deploy
+  stage: main
   dependencies: 
     - build_job
   script:

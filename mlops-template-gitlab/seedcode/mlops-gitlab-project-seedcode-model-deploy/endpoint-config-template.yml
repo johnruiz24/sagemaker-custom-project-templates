@@ -18,8 +18,7 @@ Parameters:
   StageName:
     Type: String
     Description:
-      The name for a project pipeline stage, such as Staging or Prod, for
-      which resources are provisioned and deployed.
+      The name for a project pipeline stage, such as Staging or Prod, for which resources are provisioned and deployed.
   EndpointInstanceCount:
     Type: Number
     Description: Number of instances to launch for the endpoint.
