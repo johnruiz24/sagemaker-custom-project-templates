@@ -22,7 +22,7 @@ Parameters:
   RepositoryBaseUrl:
     Type: String
     MaxLength: 1024
-    Description: The base path to the GitLab account to create the repository within. e.g. https://gitlab.com/<username>
+    Description: The base path to the GitLab account to create the repository within. e.g. https://source.tui/<username>
 
   ModelBuildCodeRepositoryName:
     Type: String
@@ -54,13 +54,13 @@ Metadata:
         
     ParameterLabels:
       GitLabServer:
-        default: "GitLab Server URI. e.g. https://gitlab.com"
+        default: "GitLab Server URI. e.g. https://source.tui"
       RepositoryBaseUrl:
-        default: "Base URL for your GitLab Repositories. e.g. https://gitlab.com/<username>"
+        default: "Base URL for your GitLab Repositories. e.g. https://source.tui/<subdomain>"
       ModelBuildCodeRepositoryName:
-        default: "Model Build Repository Name"
+        default: "Model Build Repository Name. e.g. <projectname>-build"
       ModelDeployCodeRepositoryName:
-        default: "Model Deploy Repository Name"
+        default: "Model Deploy Repository Name. e.g. <projectname>-deploy"
       GitLabGroupID:
         default: "GitLab Group ID. 'None' if using root group"
 
