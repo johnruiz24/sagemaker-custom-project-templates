@@ -18,7 +18,6 @@ import sys
 
 from pipelines._utils import get_pipeline_driver
 
-
 def main():  # pragma: no cover
     """The main harness that gets the pipeline definition JSON.
 
@@ -65,7 +64,6 @@ def main():  # pragma: no cover
     except Exception as e:  # pylint: disable=W0703
         print(f"Exception: {e}")
         sys.exit(1)
-
 
 if __name__ == "__main__":
     main()

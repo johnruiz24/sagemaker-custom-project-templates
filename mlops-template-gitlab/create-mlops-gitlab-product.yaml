@@ -569,6 +569,9 @@ Resources:
                         chunk_size = 6 * 1024
                         http = urllib3.PoolManager()
                         
+                        # bucket = sagemaker_projects_repo.split('/')[2]
+                        # key = '/'.join(sagemaker_projects_repo.split('/')[3:])
+                        # r = s3_client.get_object(Bucket=bucket, Key=key).get("Body")
                         r = http.request('GET', sagemaker_projects_repo, preload_content=False)
                         
                         with open('/tmp/sm_project_repo.zip', 'wb') as out:
@@ -590,9 +593,7 @@ Resources:
                             zip_ref.extractall('/tmp')
                         
                         logger.info(f'github zip extracted to {local_extracted_path_root}')
-
                         logger.info(f'begin project template customizations')
-
                         bootstrap_bucket_name = event['ResourceProperties']['BootStrapBucketName']
 
                         input_file_path = local_extracted_path_root + '/' + sagemaker_projects_project_name + '/project/template.yaml'
