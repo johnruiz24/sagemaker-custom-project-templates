@@ -19,7 +19,6 @@ import sys
 
 from pipelines._utils import get_pipeline_driver, convert_struct, get_pipeline_custom_tags
 
-
 def main():  # pragma: no cover
     """The main harness that creates or updates and runs the pipeline.
 
@@ -28,7 +27,7 @@ def main():  # pragma: no cover
     parser = argparse.ArgumentParser(
         "Creates or updates and runs the pipeline for the pipeline script."
     )
-
+    
     parser.add_argument(
         "-n",
         "--module-name",
@@ -98,7 +97,6 @@ def main():  # pragma: no cover
     except Exception as e:  # pylint: disable=W0703
         print(f"Exception: {e}")
         sys.exit(1)
-
 
 if __name__ == "__main__":
     main()
